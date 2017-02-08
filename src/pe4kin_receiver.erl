@@ -233,7 +233,7 @@ handle_http_poll_msg(Chunk, #state{method_state = #{state := body,
 
 push_updates(<<>>, State) -> State;
 push_updates(UpdatesBin, #state{last_update_id = LastID, updates = UpdatesQ, ulen = ULen} = State) ->
-    case jiffy:decode(UpdatesBin, [return_maps]) of
+    case jsx:decode(UpdatesBin, [return_maps]) of
         [] -> State;
         #{<<"ok">> := true, <<"result">> := []} -> State;
         #{<<"ok">> := true, <<"result">> := NewUpdates} ->

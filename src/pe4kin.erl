@@ -157,7 +157,7 @@ api_call({ApiServerEndpoint, Token}, _Bot, Method, Payload) ->
             case {hackney:body(BodyRef), ContentType, Code} of
                 {{ok, <<>>}, _, 200} -> ok;
                 {{ok, Body}, {<<"application">>, <<"json">>, _}, _}  ->
-                    case jiffy:decode(Body, [return_maps]) of
+                    case jsx:decode(Body, [return_maps]) of
                         #{<<"ok">> := true, <<"result">> := Result} when Code == 200 ->
                             {ok, Result};
                         #{<<"ok">> := false, <<"description">> := ErrDescription,
@@ -173,7 +173,7 @@ api_call({ApiServerEndpoint, Token}, _Bot, Method, Payload) ->
 do_api_call(Url, undefined) ->
     hackney:request(<<"GET">>, Url, [], [], [{pool, ?HACKNEY_POOL}]);
 do_api_call(Url, {json, Payload}) ->
-    Json = jiffy:encode(Payload),
+    Json = jsx:encode(Payload),
     Headers = [{<<"Content-Type">>, <<"application/json">>},
                {<<"Accept">>, <<"application/json">>}],
     hackney:request(<<"POST">>, Url, Headers, Json, [{pool, ?HACKNEY_POOL}]);
